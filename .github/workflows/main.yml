@@ -1,0 +1,46 @@
+name: Build NetSpoof APK
+
+on:
+  push:
+    branches: [ main, master ]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Find and extract ZIP
+      run: |
+        ZIP_FILE=$(find . -name "*.zip" -not -path "*/\.*" | head -1)
+        unzip -o "$ZIP_FILE" -d extracted_project
+        GRADLE_FILE=$(find extracted_project -name "gradlew" | head -1)
+        PROJECT_DIR=$(dirname "$GRADLE_FILE")
+        echo "PROJECT_DIR=$PROJECT_DIR" >> $GITHUB_ENV
+
+    - name: Set up JDK 17
+      uses: actions/setup-java@v4
+      with:
+        java-version: '17'
+        distribution: 'temurin'
+
+    - name: Set up Android SDK
+      uses: android-actions/setup-android@v3
+
+    - name: Build APK
+      run: |
+        unset JAVA_TOOL_OPTIONS
+        unset _JAVA_OPTIONS
+        unset JDK_JAVA_OPTIONS
+        cd "$PROJECT_DIR"
+        chmod +x gradlew
+        ./gradlew assembleDebug -Dorg.gradle.jvmargs="-Xmx2048m -XX:MaxMetaspaceSize=512m" --no-daemon --stacktrace
+
+    - name: Upload APK
+      uses: actions/upload-artifact@v4
+      with:
+        name: NetSpoof-APK
+        path: "**/outputs/apk/debug/*.apk"
+        retention-days: 30
