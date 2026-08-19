@@ -122,7 +122,7 @@
                 android:textStyle="bold"/>
         </LinearLayout>
         <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
-            android:text="• Debugger check hidden (Debug.isDebuggerConnected)\n• ADB / Dev Options / Mock Location hidden\n• TracerPid in /proc/self/status → 0\n• SafetyNet: basicIntegrity + ctsProfileMatch → true\n• Play Integrity: MEETS_STRONG_INTEGRITY\n• VPN detection blocked\n• App self-exit on detection blocked"
+            android:text="• Debugger check hidden (Debug.isDebuggerConnected)\n• ADB / Dev Options / Mock Location hidden\n• TracerPid in /proc/self/status → 0\n• SafetyNet: basicIntegrity + ctsProfileMatch → true\n• Play Integrity: MEETS_STRONG_INTEGRITY\n• VPN detection blocked\n• App self-exit on detection blocked\n• Paytm NPCI UPI Oooo0 root check → false\n• Paytm HawkEye security events suppressed\n• OsData isRooted field → false\n• Build.TAGS → release-keys"
             android:textColor="@color/text_secondary" android:textSize="11sp"
             android:lineSpacingExtra="2dp"/>
     </LinearLayout>
