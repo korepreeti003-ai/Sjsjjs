@@ -22,6 +22,7 @@ fi
 
 # Extract module files
 ui_print "- Extracting module files..."
+unzip -o "$ZIPFILE" 'module.prop'       -d "$MODPATH" >&2
 unzip -o "$ZIPFILE" 'system.prop'       -d "$MODPATH" >&2
 unzip -o "$ZIPFILE" 'service.sh'        -d "$MODPATH" >&2
 unzip -o "$ZIPFILE" 'post-fs-data.sh'   -d "$MODPATH" >&2
