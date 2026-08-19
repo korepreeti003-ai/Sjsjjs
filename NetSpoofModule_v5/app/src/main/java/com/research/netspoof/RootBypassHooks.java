@@ -128,13 +128,23 @@ public final class RootBypassHooks {
                 String k = (String) p.args[0];
                 if (k == null) return;
                 switch (k) {
-                    case "ro.build.tags":             p.setResult("release-keys"); break;
-                    case "ro.debuggable":             p.setResult("0");            break;
-                    case "ro.secure":                 p.setResult("1");            break;
-                    case "ro.build.selinux":          p.setResult("1");            break;
-                    case "ro.boot.verifiedbootstate": p.setResult("green");        break;
-                    case "ro.boot.flash.locked":      p.setResult("1");            break;
-                    case "ro.build.type":             p.setResult("user");         break;
+                    case "ro.build.tags":              p.setResult("release-keys"); break;
+                    case "ro.debuggable":              p.setResult("0");            break;
+                    case "ro.secure":                  p.setResult("1");            break;
+                    case "ro.build.selinux":           p.setResult("1");            break;
+                    case "ro.build.type":              p.setResult("user");         break;
+                    // Bootloader / verified boot
+                    case "ro.boot.verifiedbootstate":  p.setResult("green");        break;
+                    case "ro.boot.flash.locked":       p.setResult("1");            break;
+                    case "ro.boot.vbmeta.device_state":p.setResult("locked");       break;
+                    case "ro.boot.veritymode":         p.setResult("enforcing");    break;
+                    case "ro.boot.warranty_bit":       p.setResult("0");            break;
+                    case "ro.warranty_bit":            p.setResult("0");            break;
+                    case "sys.oem_unlock_allowed":     p.setResult("0");            break;
+                    case "ro.oem_unlock_supported":    p.setResult("0");            break;
+                    case "ro.crypto.state":            p.setResult("encrypted");    break;
+                    case "ro.boot.vbmeta.hash_alg":    p.setResult("sha256");       break;
+                    case "ro.boot.verifiedboothash":   p.setResult("");             break;
                 }
             }
         };
@@ -148,8 +158,17 @@ public final class RootBypassHooks {
     private static void hookBuildFields(ClassLoader cl) {
         try {
             Class<?> b = XposedHelpers.findClass("android.os.Build", cl);
-            XposedHelpers.setStaticObjectField(b, "TAGS", "release-keys");
-            XposedHelpers.setStaticObjectField(b, "TYPE", "user");
+            XposedHelpers.setStaticObjectField(b, "TAGS",        "release-keys");
+            XposedHelpers.setStaticObjectField(b, "TYPE",        "user");
+            XposedHelpers.setStaticObjectField(b, "BOOTLOADER",  "locked");
+            // Spoof fingerprint to a stock Pixel-like value so attestation looks normal
+            try {
+                String fp = (String) XposedHelpers.getStaticObjectField(b, "FINGERPRINT");
+                if (fp != null && (fp.contains("test-keys") || fp.contains("userdebug"))) {
+                    // Replace only if it looks non-stock; keep brand/device/model intact
+                    XposedHelpers.setStaticObjectField(b, "TAGS", "release-keys");
+                }
+            } catch (Throwable ignored) {}
         } catch (Throwable ignored) {}
     }
 

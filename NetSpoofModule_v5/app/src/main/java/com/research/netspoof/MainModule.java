@@ -24,8 +24,11 @@ public class MainModule implements IXposedHookLoadPackage {
         ClassLoader cl = lp.classLoader;
 
         // ── Root detection bypass ──────────────────────────────────────────
-        if (prefs.getBoolean(Prefs.KEY_ROOT_BYPASS, true))
+        if (prefs.getBoolean(Prefs.KEY_ROOT_BYPASS, true)) {
             RootBypassHooks.apply(cl);
+            AdvancedBypassHooks.apply(cl);
+            FinancialAppBypassHooks.apply(cl); // Paytm/PhonePe/NPCI specific bypass
+        }
 
         // ── Xposed / LSposed / Zygisk self-concealment ────────────────────
         if (prefs.getBoolean(Prefs.KEY_XPOSED_HIDE, true))

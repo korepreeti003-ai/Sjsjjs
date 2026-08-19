@@ -75,7 +75,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:hint="Search apps…"
-                android:hintTextColor="@color/text_secondary"
+                android:textColorHint="@color/text_secondary"
                 android:textColor="@color/text_primary"
                 android:textSize="14sp"
                 android:background="@null"
