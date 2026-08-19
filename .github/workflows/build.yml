@@ -30,9 +30,31 @@ jobs:
       - name: Build Release APK
         run: ./gradlew assembleRelease
 
+      - name: Rename APK
+        run: |
+          mkdir -p ../output
+          cp app/build/outputs/apk/release/app-release-unsigned.apk ../output/NetSpoofV5.apk
+
       - name: Upload APK artifact
         uses: actions/upload-artifact@v4
         with:
-          name: NetSpoofV5-release
-          path: NetSpoofModule_v5/app/build/outputs/apk/release/app-release-unsigned.apk
-          retention-days: 30
+          name: NetSpoofV5-APK
+          path: output/NetSpoofV5.apk
+          retention-days: 90
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: v5.0-${{ github.run_number }}
+          name: "NetSpoof v5.0 — Build ${{ github.run_number }}"
+          body: |
+            ## NetSpoof v5 — All-in-One LSposed Module
+
+            **Install karke LSposed mein enable karo, phir target app select karo.**
+
+            Root + Zygisk + LSposed — sab hide. Phone identity spoof.
+          files: output/NetSpoofV5.apk
+          draft: false
+          prerelease: false
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
