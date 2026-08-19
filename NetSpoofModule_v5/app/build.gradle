@@ -11,7 +11,7 @@ android {
         versionName    = "5.0"
     }
     buildTypes {
-        release { isMinifyEnabled = false }
+        release { minifyEnabled = false }
     }
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_11
