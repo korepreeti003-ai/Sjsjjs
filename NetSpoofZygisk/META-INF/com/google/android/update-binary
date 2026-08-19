@@ -1,0 +1,4 @@
+#!/sbin/sh
+. ${TMPDIR:-/dev/tmp}/util_functions.sh
+install_module
+exit 0
