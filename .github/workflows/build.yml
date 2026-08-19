@@ -5,6 +5,7 @@ on:
     branches: [ "main", "claude/custom-root-detection-ambulance-ewvq8w" ]
     paths:
       - 'NetSpoofModule_v5/**'
+      - '.github/workflows/build.yml'
   workflow_dispatch:
 
 jobs:
@@ -19,15 +20,26 @@ jobs:
         with:
           java-version: '17'
           distribution: 'temurin'
-          cache: gradle
 
-      - name: Grant execute permission for gradlew
-        run: chmod +x NetSpoofModule_v5/gradlew
+      - name: Set up Android SDK
+        uses: android-actions/setup-android@v3
+
+      - name: Install Gradle 8.2
+        run: |
+          wget -q https://services.gradle.org/distributions/gradle-8.2-bin.zip -O /tmp/gradle-8.2-bin.zip
+          unzip -q /tmp/gradle-8.2-bin.zip -d /opt/gradle
+          echo "GRADLE_HOME=/opt/gradle/gradle-8.2" >> $GITHUB_ENV
+          echo "/opt/gradle/gradle-8.2/bin" >> $GITHUB_PATH
+
+      - name: Regenerate Gradle wrapper
+        working-directory: NetSpoofModule_v5
+        run: |
+          gradle wrapper --gradle-version 8.2 --distribution-type bin
+          chmod +x gradlew
 
       - name: Build Release APK
-        run: |
-          cd NetSpoofModule_v5
-          ./gradlew assembleRelease --no-daemon
+        working-directory: NetSpoofModule_v5
+        run: ./gradlew assembleRelease --no-daemon --stacktrace
 
       - name: Upload APK
         uses: actions/upload-artifact@v4
