@@ -2,6 +2,7 @@ package com.research.netspoof;
 
 import de.robv.android.xposed.*;
 import java.lang.reflect.*;
+import java.util.*;
 
 /**
  * Targeted bypass for Paytm / NPCI UPI / PhonePe specific security classes.
@@ -43,7 +44,8 @@ public final class FinancialAppBypassHooks {
         hookPaytmHawkEye(cl);
         hookBuildTagsCheck(cl);
         hookGenericRootMethods(cl);
-        XposedBridge.log("[NSv5:Fin] Financial app (Paytm/PhonePe/NPCI) bypass hooks active");
+        hookBootloaderDetection(cl);
+        XposedBridge.log("[NSv5:Fin] Financial app (Paytm/PhonePe/NPCI) bypass hooks active (incl. bootloader/61007)");
     }
 
     // ── 1. NPCI UPI Oooo0 class — direct method hooks ────────────────────────
@@ -201,10 +203,11 @@ public final class FinancialAppBypassHooks {
 
     // ── 6. Generic root utility methods (common patterns across banking apps) ──
     private static void hookGenericRootMethods(ClassLoader cl) {
-        // Common method names used across various banking SDKs
         String[] classes = {
             "com.paytmbank.payments.bank.utils.RootCheckUtil",
             "net.one97.paytm.security.RootDetector",
+            "net.one97.paytm.utils.RootUtil",
+            "net.one97.paytm.utils.DeviceSecurityUtil",
             "com.phonepe.security.RootDetectionUtil",
             "com.phonepe.sdk.security.RootDetector",
             "com.mobikwik.security.RootChecker",
@@ -212,13 +215,64 @@ public final class FinancialAppBypassHooks {
         String[] methods = {
             "isDeviceRooted", "isRooted", "checkRooted", "isRootedDevice",
             "isDeviceCompromised", "checkRoot", "isRootPresent",
-            "rootDetected", "detectRoot", "hasRootAccess"
+            "rootDetected", "detectRoot", "hasRootAccess",
+            "isBootloaderUnlocked", "isDeviceIntegrityFailed",
+            "checkDeviceIntegrity", "isDeviceModified",
         };
         for (String cls : classes) {
             for (String method : methods) {
-                try {
-                    XposedHelpers.findAndHookMethod(cls, cl, method, RETURN_FALSE);
-                } catch (Throwable ignored) {}
+                try { XposedHelpers.findAndHookMethod(cls, cl, method, RETURN_FALSE); } catch (Throwable ignored) {}
+            }
+        }
+    }
+
+    // ── 7. Bootloader / key attestation checks (error 61007) ─────────────────
+    // Paytm Bank uses android.security.keystore.KeyInfo.isInsideSecureHardware()
+    // and checks ro.boot.verifiedbootstate via reflection / JNI
+    static void hookBootloaderDetection(ClassLoader cl) {
+        // Hook KeyInfo.isInsideSecureHardware — tells if key is in hardware
+        try {
+            XposedHelpers.findAndHookMethod(
+                "android.security.keystore.KeyInfo", cl,
+                "isInsideSecureHardware",
+                new XC_MethodHook() {
+                    @Override protected void afterHookedMethod(MethodHookParam p) {
+                        p.setResult(true);
+                    }
+                });
+        } catch (Throwable ignored) {}
+
+        // Hook android.os.SystemProperties.get via reflection (Paytm uses reflection to bypass hooks)
+        try {
+            Class<?> sysProp = XposedHelpers.findClass("android.os.SystemProperties", cl);
+            for (Method m : sysProp.getDeclaredMethods()) {
+                if (m.getName().equals("native_get") || m.getName().equals("get")) {
+                    XposedBridge.hookMethod(m, new XC_MethodHook() {
+                        @Override protected void afterHookedMethod(MethodHookParam p) {
+                            if (p.args == null || p.args.length == 0) return;
+                            String k = String.valueOf(p.args[0]);
+                            if (k.contains("verifiedbootstate")) p.setResult("green");
+                            else if (k.contains("flash.locked"))  p.setResult("1");
+                            else if (k.contains("vbmeta") && k.contains("state")) p.setResult("locked");
+                            else if (k.contains("warranty"))      p.setResult("0");
+                            else if (k.contains("oem_unlock"))    p.setResult("0");
+                        }
+                    });
+                }
+            }
+        } catch (Throwable ignored) {}
+
+        // Suppress Paytm Bank's device check flow that fires error 61007
+        for (String cls : new String[]{
+                "com.paytmbank.payments.bank.security.DeviceIntegrityChecker",
+                "com.paytmbank.payments.bank.security.BootloaderChecker",
+                "com.paytmbank.payments.bank.utils.PaymentBankSecurityUtil",
+                "net.one97.paytm.security.DeviceChecker"}) {
+            for (String method : new String[]{
+                    "checkDeviceIntegrity", "isBootloaderLocked", "getDeviceIntegrityStatus",
+                    "isDeviceSecure", "performIntegrityCheck", "check"}) {
+                try { XposedHelpers.findAndHookMethod(cls, cl, method, RETURN_FALSE); } catch (Throwable ignored) {}
+                try { XposedHelpers.findAndHookMethod(cls, cl, method, RETURN_NULL);  } catch (Throwable ignored) {}
             }
         }
     }
