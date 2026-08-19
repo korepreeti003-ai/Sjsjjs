@@ -1,10 +1,11 @@
-name: Build NetSpoof v5 APK
+name: Build NetSpoof v5 APK + Zygisk Module
 
 on:
   push:
     branches: [ "main", "claude/custom-root-detection-ambulance-ewvq8w" ]
     paths:
       - 'NetSpoofModule_v5/**'
+      - 'NetSpoofZygisk/**'
       - '.github/workflows/build.yml'
   workflow_dispatch:
 
@@ -24,11 +25,15 @@ jobs:
       - name: Set up Android SDK
         uses: android-actions/setup-android@v3
 
+      - name: Install NDK 25 (for Zygisk C++ build)
+        run: |
+          sdkmanager "ndk;25.2.9519653"
+          echo "NDK_HOME=$ANDROID_SDK_ROOT/ndk/25.2.9519653" >> $GITHUB_ENV
+
       - name: Download and install Gradle 8.2
         run: |
           wget -q https://services.gradle.org/distributions/gradle-8.2-bin.zip -O /tmp/gradle-8.2-bin.zip
           unzip -q /tmp/gradle-8.2-bin.zip -d /opt/gradle
-          export PATH="/opt/gradle/gradle-8.2/bin:$PATH"
           echo "/opt/gradle/gradle-8.2/bin" >> $GITHUB_PATH
 
       - name: Regenerate Gradle wrapper
@@ -36,13 +41,61 @@ jobs:
         run: |
           /opt/gradle/gradle-8.2/bin/gradle wrapper --gradle-version 8.2 --distribution-type bin
           chmod +x gradlew
-          echo "--- Wrapper jar contents ---"
-          unzip -l gradle/wrapper/gradle-wrapper.jar | head -10
 
+      # ── Build LSposed APK ──────────────────────────────────────────────────
       - name: Build Release APK
         working-directory: NetSpoofModule_v5
         run: ./gradlew assembleRelease --no-daemon --stacktrace
 
+      # ── Build Zygisk native .so (arm64 + arm32) ───────────────────────────
+      - name: Build Zygisk native library (arm64-v8a)
+        run: |
+          mkdir -p NetSpoofZygisk/build/arm64-v8a
+          cmake -B NetSpoofZygisk/build/arm64-v8a \
+            -DCMAKE_TOOLCHAIN_FILE=$NDK_HOME/build/cmake/android.toolchain.cmake \
+            -DANDROID_ABI=arm64-v8a \
+            -DANDROID_PLATFORM=android-27 \
+            -DCMAKE_BUILD_TYPE=Release \
+            -S NetSpoofZygisk/jni
+          cmake --build NetSpoofZygisk/build/arm64-v8a --target netspoof_zygisk
+
+      - name: Build Zygisk native library (armeabi-v7a)
+        run: |
+          mkdir -p NetSpoofZygisk/build/armeabi-v7a
+          cmake -B NetSpoofZygisk/build/armeabi-v7a \
+            -DCMAKE_TOOLCHAIN_FILE=$NDK_HOME/build/cmake/android.toolchain.cmake \
+            -DANDROID_ABI=armeabi-v7a \
+            -DANDROID_PLATFORM=android-27 \
+            -DCMAKE_BUILD_TYPE=Release \
+            -S NetSpoofZygisk/jni
+          cmake --build NetSpoofZygisk/build/armeabi-v7a --target netspoof_zygisk
+
+      # ── Package Zygisk flashable zip ──────────────────────────────────────
+      - name: Package NetSpoofZygisk.zip
+        run: |
+          STAGING=$(mktemp -d)
+          # Copy module skeleton
+          cp -r NetSpoofZygisk/META-INF   "$STAGING/"
+          cp    NetSpoofZygisk/module.prop "$STAGING/"
+          cp    NetSpoofZygisk/system.prop "$STAGING/"
+          cp    NetSpoofZygisk/customize.sh    "$STAGING/"
+          cp    NetSpoofZygisk/service.sh      "$STAGING/"
+          cp    NetSpoofZygisk/post-fs-data.sh "$STAGING/"
+
+          # Place Zygisk .so files under zygisk/<ABI>.so (Magisk loads these)
+          mkdir -p "$STAGING/zygisk"
+          cp NetSpoofZygisk/build/arm64-v8a/libnetspoof_zygisk.so \
+             "$STAGING/zygisk/arm64-v8a.so"
+          cp NetSpoofZygisk/build/armeabi-v7a/libnetspoof_zygisk.so \
+             "$STAGING/zygisk/armeabi-v7a.so"
+
+          # Zip everything
+          cd "$STAGING"
+          zip -r "$GITHUB_WORKSPACE/NetSpoofZygisk.zip" .
+          echo "Zip contents:"
+          unzip -l "$GITHUB_WORKSPACE/NetSpoofZygisk.zip"
+
+      # ── Upload artifacts ──────────────────────────────────────────────────
       - name: Upload APK artifact
         if: success()
         uses: actions/upload-artifact@v4
@@ -51,14 +104,43 @@ jobs:
           path: NetSpoofModule_v5/app/build/outputs/apk/release/app-release-unsigned.apk
           retention-days: 90
 
-      - name: Create GitHub Release with APK
+      - name: Upload Zygisk Module artifact
+        if: success()
+        uses: actions/upload-artifact@v4
+        with:
+          name: NetSpoofZygisk-Module
+          path: NetSpoofZygisk.zip
+          retention-days: 90
+
+      # ── Create GitHub Release with BOTH files ─────────────────────────────
+      - name: Create GitHub Release
         if: success()
         uses: softprops/action-gh-release@v2
         with:
           tag_name: v5-build-${{ github.run_number }}
-          name: "NetSpoof v5 — Build #${{ github.run_number }}"
+          name: "NetSpoof v5.1 — Build #${{ github.run_number }}"
           body: |
-            Auto-built APK — Root/Xposed/Phone bypass module for LSposed.
-            Install via LSposed → enable module → select target app → reboot.
-          files: NetSpoofModule_v5/app/build/outputs/apk/release/app-release-unsigned.apk
+            ## NetSpoof v5.1 — Root / Bootloader Bypass Combo
+
+            ### What's included
+            | File | What it does |
+            |---|---|
+            | `app-release-unsigned.apk` | LSposed module — Java-level hooks (root, bootloader, Play Integrity, NPCI, HawkEye) |
+            | `NetSpoofZygisk.zip` | Zygisk/Magisk flashable module — native-level system_property_get hooks + auto LSposed scope |
+
+            ### Installation order
+            1. Flash `NetSpoofZygisk.zip` via Magisk → reboot
+            2. Install `app-release-unsigned.apk` (allow unknown sources)
+            3. Open NetSpoof APK → select Paytm / PhonePe → toggle all ON
+            4. Enable NetSpoof in LSposed Manager → add Paytm/PhonePe to scope
+            5. Force-stop Paytm → reopen
+
+            ### Fixes in v5.1
+            - Native `system_property_get` hook via PLT (bypasses Java-reflection-based detection)
+            - Auto-adds target apps to LSposed scope via SQLite (prevents scope crash)
+            - Magisk DenyList auto-configured for Paytm/PhonePe
+            - Bootloader/vbmeta/warranty props at OS level
+          files: |
+            NetSpoofModule_v5/app/build/outputs/apk/release/app-release-unsigned.apk
+            NetSpoofZygisk.zip
           token: ${{ secrets.GITHUB_TOKEN }}

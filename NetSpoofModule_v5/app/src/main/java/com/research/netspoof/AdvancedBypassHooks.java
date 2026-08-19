@@ -1,6 +1,7 @@
 package com.research.netspoof;
 
 import android.os.Debug;
+import android.content.pm.ApplicationInfo;
 import java.io.*;
 import java.util.*;
 import de.robv.android.xposed.*;
@@ -39,6 +40,8 @@ public final class AdvancedBypassHooks {
         hookPlayIntegrity(cl);
         hookVpnDetection(cl);
         hookExitBlocking();
+        hookInstalledPackages(cl);
+        hookProcessList();
         XposedBridge.log("[NSv5:Adv] Advanced bypass hooks active (Paytm/PhonePe level)");
     }
 
@@ -160,6 +163,70 @@ public final class AdvancedBypassHooks {
                     @Override protected void afterHookedMethod(MethodHookParam p) {
                         int type = (int) p.args[0];
                         if (type == 17) p.setResult(null); // TYPE_VPN = 17 → null means no VPN
+                    }
+                });
+        } catch (Throwable ignored) {}
+    }
+
+    // ── 8+9. Hide root packages from getInstalledApplications / getInstalledPackages ──
+    private static final Set<String> HIDE_PKGS = new HashSet<>(Arrays.asList(
+        "com.topjohnwu.magisk", "eu.chainfire.supersu", "com.noshufou.android.su",
+        "com.koushikdutta.superuser", "com.kingouser.com", "io.github.vvb2060.magisk",
+        "com.fox2code.mmm", "io.github.sukisu.manager", "org.lsposed.manager",
+        "io.github.lsposed.manager", "com.rovo98.magiskhide"
+    ));
+
+    private static void hookInstalledPackages(ClassLoader cl) {
+        XC_MethodHook filterHook = new XC_MethodHook() {
+            @Override protected void afterHookedMethod(MethodHookParam p) {
+                Object result = p.getResult();
+                if (!(result instanceof List)) return;
+                @SuppressWarnings("unchecked")
+                List<Object> list = (List<Object>) result;
+                list.removeIf(item -> {
+                    try {
+                        String pkg = null;
+                        if (item instanceof ApplicationInfo) {
+                            pkg = ((ApplicationInfo) item).packageName;
+                        } else {
+                            java.lang.reflect.Field f = item.getClass().getField("packageName");
+                            f.setAccessible(true);
+                            pkg = (String) f.get(item);
+                        }
+                        return pkg != null && HIDE_PKGS.contains(pkg);
+                    } catch (Throwable ignored) { return false; }
+                });
+                p.setResult(list);
+            }
+        };
+        for (String cls : new String[]{"android.app.ApplicationPackageManager", "android.content.pm.PackageManager"}) {
+            try { XposedHelpers.findAndHookMethod(cls, cl, "getInstalledApplications", int.class, filterHook); } catch (Throwable ignored) {}
+            try { XposedHelpers.findAndHookMethod(cls, cl, "getInstalledPackages",     int.class, filterHook); } catch (Throwable ignored) {}
+        }
+    }
+
+    // ── 10. /proc/net/tcp — hide Frida JDWP ports ─────────────────────────
+    private static final Set<String> TCP_PORT_DENY = new HashSet<>(Arrays.asList(
+        "0BB8", "1CBB", // 3000, 7355 — common Frida ports hex
+        "8AE0"          // 35552 — JDWP
+    ));
+
+    private static void hookProcessList() {
+        try {
+            XposedHelpers.findAndHookMethod(BufferedReader.class, "readLine",
+                new XC_MethodHook() {
+                    @Override protected void afterHookedMethod(MethodHookParam p) throws Throwable {
+                        String line = (String) p.getResult();
+                        if (line == null) return;
+                        for (String port : TCP_PORT_DENY) {
+                            if (line.contains(port)) {
+                                // Skip this line — return next line instead
+                                String next = (String) XposedBridge.invokeOriginalMethod(
+                                        p.method, p.thisObject, p.args);
+                                p.setResult(next);
+                                return;
+                            }
+                        }
                     }
                 });
         } catch (Throwable ignored) {}

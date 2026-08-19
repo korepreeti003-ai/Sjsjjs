@@ -1,0 +1,7 @@
+id=netspoof_zygisk
+name=NetSpoof Zygisk — Root/Bootloader Bypass
+version=v5.1
+versionCode=51
+author=NetSpoof
+description=Bypasses root, bootloader, and device integrity checks for Paytm / PhonePe / NPCI UPI. Combine with NetSpoof LSposed APK for full coverage.
+minMagisk=24000

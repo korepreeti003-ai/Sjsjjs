@@ -1,0 +1,36 @@
+# ── NetSpoof Zygisk — system.prop ──────────────────────────────────────────
+# These are applied at early-init via Magisk resetprop before any app launches.
+# They override the real values at OS level — no hook needed.
+
+# Verified boot — report clean boot to all attestation paths
+ro.boot.verifiedbootstate=green
+ro.boot.veritymode=enforcing
+ro.boot.vbmeta.device_state=locked
+ro.boot.vbmeta.avb_version=1.0
+ro.boot.flash.locked=1
+
+# Build integrity
+ro.build.tags=release-keys
+ro.build.type=user
+ro.debuggable=0
+ro.secure=1
+ro.adb.secure=1
+ro.build.selinux=1
+
+# Warranty / OEM unlock — all locked / un-tampered
+ro.warranty_bit=0
+ro.boot.warranty_bit=0
+sys.oem_unlock_allowed=0
+ro.oem_unlock_supported=0
+ro.boot.oem_unlock_supported=0
+
+# Crypto
+ro.crypto.state=encrypted
+ro.crypto.type=file
+
+# vbmeta hash (empty = no custom image)
+ro.boot.vbmeta.hash_alg=sha256
+ro.boot.verifiedboothash=
+
+# SELinux
+ro.build.selinux=1
