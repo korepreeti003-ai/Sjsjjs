@@ -24,24 +24,27 @@ jobs:
       - name: Set up Android SDK
         uses: android-actions/setup-android@v3
 
-      - name: Install Gradle 8.2
+      - name: Download and install Gradle 8.2
         run: |
           wget -q https://services.gradle.org/distributions/gradle-8.2-bin.zip -O /tmp/gradle-8.2-bin.zip
           unzip -q /tmp/gradle-8.2-bin.zip -d /opt/gradle
-          echo "GRADLE_HOME=/opt/gradle/gradle-8.2" >> $GITHUB_ENV
+          export PATH="/opt/gradle/gradle-8.2/bin:$PATH"
           echo "/opt/gradle/gradle-8.2/bin" >> $GITHUB_PATH
 
       - name: Regenerate Gradle wrapper
         working-directory: NetSpoofModule_v5
         run: |
-          gradle wrapper --gradle-version 8.2 --distribution-type bin
+          /opt/gradle/gradle-8.2/bin/gradle wrapper --gradle-version 8.2 --distribution-type bin
           chmod +x gradlew
+          echo "--- Wrapper jar contents ---"
+          unzip -l gradle/wrapper/gradle-wrapper.jar | head -10
 
       - name: Build Release APK
         working-directory: NetSpoofModule_v5
         run: ./gradlew assembleRelease --no-daemon --stacktrace
 
       - name: Upload APK
+        if: success()
         uses: actions/upload-artifact@v4
         with:
           name: NetSpoofV5-APK
