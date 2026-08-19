@@ -1,0 +1,253 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent" android:layout_height="match_parent"
+    android:background="@color/bg_main" android:fillViewport="true">
+
+<LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+    android:orientation="vertical" android:padding="14dp">
+
+    <!-- ═══ HEADER ═══════════════════════════════════════════════════════ -->
+    <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+        android:orientation="horizontal" android:gravity="center_vertical"
+        android:paddingTop="6dp" android:paddingBottom="14dp">
+        <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content"
+            android:layout_weight="1" android:orientation="vertical">
+            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+                android:text="🛡 NetSpoof v5"
+                android:textColor="@color/text_primary" android:textSize="22sp"
+                android:textStyle="bold"/>
+            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+                android:text="Root · Xposed · Zygisk · Phone — All Hidden"
+                android:textColor="@color/text_secondary" android:textSize="11sp"/>
+        </LinearLayout>
+        <TextView android:id="@+id/tv_status"
+            android:layout_width="wrap_content" android:layout_height="wrap_content"
+            android:text="○ INACTIVE" android:textColor="@color/text_secondary"
+            android:textSize="12sp" android:textStyle="bold"/>
+    </LinearLayout>
+
+    <!-- ═══ MASTER TOGGLE ════════════════════════════════════════════════ -->
+    <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+        android:background="@drawable/bg_card" android:padding="14dp"
+        android:orientation="horizontal" android:gravity="center_vertical"
+        android:layout_marginBottom="10dp">
+        <TextView android:layout_width="0dp" android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Module Enabled" android:textColor="@color/text_primary"
+            android:textSize="15sp" android:textStyle="bold"/>
+        <androidx.appcompat.widget.SwitchCompat android:id="@+id/sw_enabled"
+            android:layout_width="wrap_content" android:layout_height="wrap_content"
+            android:checked="true"/>
+    </LinearLayout>
+
+    <!-- ═══ TARGET APP ═══════════════════════════════════════════════════ -->
+    <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+        android:background="@drawable/bg_card" android:padding="14dp"
+        android:orientation="vertical" android:layout_marginBottom="10dp">
+
+        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+            android:text="🎯  Target App" android:textColor="@color/accent_red"
+            android:textSize="12sp" android:textStyle="bold" android:layout_marginBottom="10dp"/>
+
+        <LinearLayout android:id="@+id/card_app_empty"
+            android:layout_width="match_parent" android:layout_height="wrap_content"
+            android:visibility="visible">
+            <Button android:id="@+id/btn_select_app"
+                android:layout_width="match_parent" android:layout_height="44dp"
+                android:text="+ Select Target App"
+                android:textColor="@color/text_primary"
+                android:background="@drawable/bg_btn_save" android:textSize="14sp"/>
+        </LinearLayout>
+
+        <LinearLayout android:id="@+id/card_app_selected"
+            android:layout_width="match_parent" android:layout_height="wrap_content"
+            android:orientation="horizontal" android:gravity="center_vertical"
+            android:visibility="gone">
+            <ImageView android:id="@+id/iv_app_icon"
+                android:layout_width="46dp" android:layout_height="46dp"
+                android:layout_marginEnd="10dp"/>
+            <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content"
+                android:layout_weight="1" android:orientation="vertical">
+                <TextView android:id="@+id/tv_app_name"
+                    android:layout_width="wrap_content" android:layout_height="wrap_content"
+                    android:textColor="@color/text_primary" android:textSize="14sp"
+                    android:textStyle="bold" android:maxLines="1" android:ellipsize="end"/>
+                <TextView android:id="@+id/tv_app_pkg"
+                    android:layout_width="wrap_content" android:layout_height="wrap_content"
+                    android:textColor="@color/text_secondary" android:textSize="11sp"
+                    android:maxLines="1" android:ellipsize="end"/>
+            </LinearLayout>
+            <Button android:id="@+id/btn_select_app"
+                android:layout_width="wrap_content" android:layout_height="34dp"
+                android:text="Change" android:textColor="@color/text_primary"
+                android:background="@drawable/bg_btn_small" android:textSize="12sp"/>
+        </LinearLayout>
+    </LinearLayout>
+
+    <!-- ═══ ROOT BYPASS ══════════════════════════════════════════════════ -->
+    <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+        android:background="@drawable/bg_card" android:padding="14dp"
+        android:orientation="vertical" android:layout_marginBottom="10dp">
+
+        <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+            android:orientation="horizontal" android:gravity="center_vertical"
+            android:layout_marginBottom="6dp">
+            <TextView android:layout_width="0dp" android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="🛡  Root Detection Bypass"
+                android:textColor="@color/green_active" android:textSize="13sp"
+                android:textStyle="bold"/>
+            <androidx.appcompat.widget.SwitchCompat android:id="@+id/sw_root_bypass"
+                android:layout_width="wrap_content" android:layout_height="wrap_content"
+                android:checked="true"/>
+        </LinearLayout>
+        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+            android:text="• File system (su, magisk paths)\n• PackageManager (root apps hidden)\n• Runtime.exec (su commands blocked)\n• Build props (release-keys, debuggable=0)\n• SELinux (enforcing spoofed)\n• /proc/mounts filter"
+            android:textColor="@color/text_secondary" android:textSize="11sp"
+            android:lineSpacingExtra="2dp"/>
+    </LinearLayout>
+
+    <!-- ═══ XPOSED / ZYGISK / LSPOSED HIDE ══════════════════════════════ -->
+    <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+        android:background="@drawable/bg_card" android:padding="14dp"
+        android:orientation="vertical" android:layout_marginBottom="10dp">
+
+        <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+            android:orientation="horizontal" android:gravity="center_vertical"
+            android:layout_marginBottom="6dp">
+            <TextView android:layout_width="0dp" android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="👁  Xposed / Zygisk / LSposed Hide"
+                android:textColor="#FF9800" android:textSize="13sp"
+                android:textStyle="bold"/>
+            <androidx.appcompat.widget.SwitchCompat android:id="@+id/sw_xposed_hide"
+                android:layout_width="wrap_content" android:layout_height="wrap_content"
+                android:checked="true"/>
+        </LinearLayout>
+        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+            android:text="• ClassLoader.loadClass (XposedBridge hidden)\n• Class.forName (Xposed classes blocked)\n• Stack trace (Xposed frames stripped)\n• /proc/self/maps (lsplant/zygisk/magisk hidden)\n• /proc/net/unix (socket entries hidden)\n• System.getenv JAVA_TOOL_OPTIONS stripped"
+            android:textColor="@color/text_secondary" android:textSize="11sp"
+            android:lineSpacingExtra="2dp"/>
+    </LinearLayout>
+
+    <!-- ═══ PHONE SPOOF ══════════════════════════════════════════════════ -->
+    <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+        android:background="@drawable/bg_card" android:padding="14dp"
+        android:orientation="vertical" android:layout_marginBottom="10dp">
+
+        <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+            android:orientation="horizontal" android:gravity="center_vertical"
+            android:layout_marginBottom="10dp">
+            <TextView android:layout_width="0dp" android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="📱  Phone Identity Spoof"
+                android:textColor="@color/accent_blue" android:textSize="13sp"
+                android:textStyle="bold"/>
+            <androidx.appcompat.widget.SwitchCompat android:id="@+id/sw_phone_spoof"
+                android:layout_width="wrap_content" android:layout_height="wrap_content"
+                android:checked="true"/>
+        </LinearLayout>
+
+        <!-- Number -->
+        <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+            android:orientation="horizontal" android:gravity="center_vertical"
+            android:layout_marginBottom="6dp">
+            <EditText android:id="@+id/et_number"
+                android:layout_width="0dp" android:layout_height="42dp" android:layout_weight="1"
+                android:hint="Phone Number (+91...)" android:inputType="phone"
+                android:layout_marginEnd="6dp"/>
+            <Button android:id="@+id/btn_rand_number"
+                android:layout_width="42dp" android:layout_height="42dp"
+                android:text="🎲" android:textSize="16sp"
+                android:background="@drawable/bg_btn_small" android:padding="0dp"/>
+        </LinearLayout>
+        <TextView android:id="@+id/tv_carrier_badge"
+            android:layout_width="wrap_content" android:layout_height="wrap_content"
+            android:textColor="@color/green_active" android:textSize="11sp"
+            android:layout_marginBottom="6dp"/>
+
+        <EditText android:id="@+id/et_operator"
+            android:layout_width="match_parent" android:layout_height="42dp"
+            android:hint="Operator (Airtel/Jio/Vi)" android:layout_marginBottom="5dp"/>
+        <EditText android:id="@+id/et_sim_op"
+            android:layout_width="match_parent" android:layout_height="42dp"
+            android:hint="SIM Operator" android:layout_marginBottom="5dp"/>
+        <EditText android:id="@+id/et_mcc_mnc"
+            android:layout_width="match_parent" android:layout_height="42dp"
+            android:hint="MCC+MNC (40410)" android:layout_marginBottom="5dp"/>
+        <EditText android:id="@+id/et_country"
+            android:layout_width="match_parent" android:layout_height="42dp"
+            android:hint="Country ISO (in/us)" android:layout_marginBottom="5dp"/>
+        <EditText android:id="@+id/et_imsi"
+            android:layout_width="match_parent" android:layout_height="42dp"
+            android:hint="IMSI (15 digits)" android:inputType="number"
+            android:layout_marginBottom="5dp"/>
+        <EditText android:id="@+id/et_iccid"
+            android:layout_width="match_parent" android:layout_height="42dp"
+            android:hint="ICCID (20 digits)" android:inputType="number"
+            android:layout_marginBottom="5dp"/>
+
+        <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+            android:orientation="horizontal" android:gravity="center_vertical"
+            android:layout_marginBottom="5dp">
+            <EditText android:id="@+id/et_imei"
+                android:layout_width="0dp" android:layout_height="42dp" android:layout_weight="1"
+                android:hint="IMEI (15 digits)" android:inputType="number"
+                android:layout_marginEnd="6dp"/>
+            <Button android:id="@+id/btn_rand_imei"
+                android:layout_width="42dp" android:layout_height="42dp"
+                android:text="🎲" android:textSize="16sp"
+                android:background="@drawable/bg_btn_small" android:padding="0dp"/>
+        </LinearLayout>
+
+        <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+            android:orientation="horizontal" android:gravity="center_vertical">
+            <EditText android:id="@+id/et_android_id"
+                android:layout_width="0dp" android:layout_height="42dp" android:layout_weight="1"
+                android:hint="Android ID (hex 16)" android:layout_marginEnd="6dp"/>
+            <Button android:id="@+id/btn_rand_aid"
+                android:layout_width="42dp" android:layout_height="42dp"
+                android:text="🎲" android:textSize="16sp"
+                android:background="@drawable/bg_btn_small" android:padding="0dp"/>
+        </LinearLayout>
+    </LinearLayout>
+
+    <!-- ═══ CUSTOM MESSAGE ═══════════════════════════════════════════════ -->
+    <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+        android:background="@drawable/bg_card" android:padding="14dp"
+        android:orientation="vertical" android:layout_marginBottom="10dp">
+
+        <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+            android:orientation="horizontal" android:gravity="center_vertical"
+            android:layout_marginBottom="8dp">
+            <TextView android:layout_width="0dp" android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="💬  Custom Message Overlay"
+                android:textColor="@color/text_primary" android:textSize="13sp"
+                android:textStyle="bold"/>
+            <androidx.appcompat.widget.SwitchCompat android:id="@+id/sw_show_msg"
+                android:layout_width="wrap_content" android:layout_height="wrap_content"/>
+        </LinearLayout>
+
+        <EditText android:id="@+id/et_custom_msg"
+            android:layout_width="match_parent" android:layout_height="wrap_content"
+            android:hint="Message dikhani hai target app mein..."
+            android:minLines="2" android:maxLines="3"
+            android:inputType="textMultiLine" android:gravity="top"/>
+
+        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+            android:text="Har screen open pe Toast ke roop mein dikhega."
+            android:textColor="@color/text_hint" android:textSize="11sp"
+            android:layout_marginTop="5dp"/>
+    </LinearLayout>
+
+    <!-- ═══ SAVE ══════════════════════════════════════════════════════════ -->
+    <Button android:id="@+id/btn_save"
+        android:layout_width="match_parent" android:layout_height="50dp"
+        android:text="💾 Save &amp; Apply"
+        android:textColor="@color/text_primary" android:textSize="16sp"
+        android:textStyle="bold" android:background="@drawable/bg_btn_save"
+        android:layout_marginTop="4dp" android:layout_marginBottom="20dp"/>
+
+</LinearLayout>
+</ScrollView>

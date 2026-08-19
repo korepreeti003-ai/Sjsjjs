@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">NetSpoof</string>
+    <string name="app_description">LSPosed Network &amp; SIM Identity Spoofer</string>
+
+    <!-- Status -->
+    <string name="status_active">● ACTIVE</string>
+    <string name="status_inactive">○ INACTIVE</string>
+
+    <!-- Buttons -->
+    <string name="btn_save">💾  Save &amp; Apply</string>
+    <string name="btn_select_app">🎮  Select / Change App</string>
+    <string name="btn_real_values">📱 My Real Values</string>
+    <string name="btn_randomize">🎲 Randomize All</string>
+    <string name="btn_change">Change</string>
+    <string name="btn_back">Back</string>
+
+    <!-- Labels -->
+    <string name="label_phone_number">Phone Number</string>
+    <string name="label_imsi">IMSI (Subscriber ID)</string>
+    <string name="label_operator">Network Operator Name</string>
+    <string name="label_sim_operator">SIM Operator Name</string>
+    <string name="label_iccid">SIM Serial (ICCID)</string>
+    <string name="label_country">Country ISO</string>
+    <string name="label_mcc_mnc">MCC + MNC</string>
+    <string name="label_android_id">Android ID</string>
+    <string name="label_imei">IMEI</string>
+
+    <!-- Hints -->
+    <string name="hint_phone">+91XXXXXXXXXX</string>
+    <string name="hint_imsi">404101234567890</string>
+    <string name="hint_operator">Airtel</string>
+    <string name="hint_iccid">89910123456789012345</string>
+    <string name="hint_country">in</string>
+    <string name="hint_mcc_mnc">40410</string>
+    <string name="hint_android_id">a1b2c3d4e5f6a7b8</string>
+    <string name="hint_imei">352000001234567</string>
+
+    <!-- Toasts / Snackbars -->
+    <string name="saved_ok">✅ Config saved! Restart target game to apply.</string>
+    <string name="no_app_selected">⚠ Please select a target game first.</string>
+    <string name="real_values_loaded">📱 Real SIM values loaded.</string>
+    <string name="randomized">🎲 All values randomized.</string>
+
+    <!-- Tip -->
+    <string name="tip_real_number">💡 Tip: Agar apna real number dalo toh calls normally aayengi — spoof sirf app ke andar kaam karta hai.</string>
+
+    <!-- LSPosed reminder -->
+    <string name="reminder_lsposed">⚠ LSPosed mein NetSpoof module enable karna mat bhoolna!</string>
+
+    <!-- App Picker -->
+    <string name="search_hint">Search apps…</string>
+    <string name="loading_apps">Loading apps…</string>
+    <string name="no_apps_found">No apps found</string>
+    <string name="select_target_game">Select Target Game</string>
+</resources>
