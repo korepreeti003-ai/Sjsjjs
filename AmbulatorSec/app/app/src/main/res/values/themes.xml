@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="Theme.AmbulatorSec" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+        <item name="colorPrimary">@color/accent_red</item>
+        <item name="colorPrimaryVariant">@color/accent_orange</item>
+        <item name="colorOnPrimary">@color/text_primary</item>
+        <item name="colorSurface">@color/bg_card</item>
+        <item name="android:windowBackground">@color/bg_main</item>
+        <item name="android:statusBarColor">@color/bg_main</item>
+        <item name="android:navigationBarColor">@color/bg_main</item>
+        <item name="editTextStyle">@style/Widget.AmbulatorSec.EditText</item>
+    </style>
+
+    <style name="Widget.AmbulatorSec.EditText" parent="Widget.MaterialComponents.TextInputEditText">
+        <item name="android:textColor">@color/text_primary</item>
+        <item name="android:textColorHint">@color/text_hint</item>
+        <item name="android:background">@drawable/bg_input</item>
+        <item name="android:paddingStart">12dp</item>
+        <item name="android:paddingEnd">12dp</item>
+        <item name="android:paddingTop">10dp</item>
+        <item name="android:paddingBottom">10dp</item>
+    </style>
+</resources>

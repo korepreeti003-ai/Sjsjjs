@@ -1,0 +1,124 @@
+╔══════════════════════════════════════════════════════════════╗
+║         AmbulatorSec — Security Research Virtual Device      ║
+║           Laptop pe Android emulator with ZERO detection     ║
+╚══════════════════════════════════════════════════════════════╝
+
+REQUIREMENTS:
+  - Android Studio installed (Windows/Linux/Mac)
+  - Python 3.7+ installed
+  - 8 GB RAM minimum (16 GB recommended)
+  - Internet connection (pehli baar system image download hoga)
+
+══════════════════════════════════════════════
+STEP 1: SETUP (Ek baar karna hai)
+══════════════════════════════════════════════
+
+Windows:
+  1. Is folder ko C:\AmbulatorSec mein extract karo
+  2. setup_ambulator.py pe double-click karo
+     YA Command Prompt mein:
+     python setup_ambulator.py
+
+Linux/Mac:
+  python3 setup_ambulator.py
+
+Script yeh sab automatically karega:
+  ✅ Android emulator create karega (1080p, 4GB RAM, GPU)
+  ✅ Google Play Store built-in hoga
+  ✅ Root enable karega
+  ✅ Build props patch karega (root detection block)
+  ✅ AmbulatorSec companion app install karega
+
+══════════════════════════════════════════════
+STEP 2: COMPANION APP SETUP (LSposed module)
+══════════════════════════════════════════════
+
+Emulator ke andar:
+  1. LSposed install karo (Magisk module se)
+     LSposed Release: https://github.com/LSPosed/LSPosed/releases
+     → Magisk → Modules → Install from storage → LSPosed zip
+
+  2. AmbulatorSec app automatically installed hogi
+     (ya manually: adb install AmbulatorSec.apk)
+
+  3. LSposed Manager open karo → Modules →
+     AmbulatorSec enable karo
+
+══════════════════════════════════════════════
+STEP 3: CONFIGURE AmbulatorSec APP
+══════════════════════════════════════════════
+
+App open karo:
+
+  [🎯 Target App]
+     "Select Target App" → jo app test karni hai use choose karo
+
+  [🛡 Root Detection Bypass] → ON rakho
+     File, PackageManager, Runtime, Build props — sab hook hoga
+
+  [📱 Phone Identity Spoof]
+     Number daalo → Carrier auto-detect hoga (Airtel/Jio/Vi etc.)
+     🎲 button se random IMEI/Android ID bana sakte ho
+
+  [💬 Custom Message]
+     Toggle ON karo → apna message type karo
+     (Yeh message target app mein har screen open pe dikhega)
+
+  [💾 Save & Apply] dabao
+  → Target app force-stop karo → reopen karo → Done!
+
+══════════════════════════════════════════════
+NEXT TIME LAUNCH KARNA HO:
+══════════════════════════════════════════════
+
+  Windows: launch_ambulator.bat double-click karo
+  Linux:   ./launch_ambulator.sh
+
+══════════════════════════════════════════════
+QUICK NUMBER/MESSAGE SET (Command Line):
+══════════════════════════════════════════════
+
+  python3 set_config.py --number +919876543210
+  python3 set_config.py --msg "Research Mode Active"
+
+══════════════════════════════════════════════
+TROUBLESHOOTING:
+══════════════════════════════════════════════
+
+Q: "SDK nahi mila" error?
+   → Android Studio install karo phir try karo
+   → Ya: set ANDROID_HOME=C:\Users\<name>\AppData\Local\Android\Sdk
+
+Q: Emulator slow hai?
+   → Virtualization enable karo BIOS mein (VT-x/AMD-V)
+   → Task Manager mein check karo HAXM chal raha hai
+
+Q: Root detection still showing?
+   → LSposed properly enable hai? Check karo
+   → Target app force-stop karke reopen karo
+   → Module scope mein target app add kiya?
+
+Q: Play Store kaam nahi kar raha?
+   → google_apis_playstore image use karo (setup automatically karta hai)
+   → First launch pe Play Store setup karo with Google account
+
+══════════════════════════════════════════════
+ROOT DETECTION BYPASS (kya kya chhupa ta hai):
+══════════════════════════════════════════════
+
+✅ /su, /system/bin/su, /sbin/su — hidden
+✅ /.magisk, /data/adb/magisk — hidden
+✅ Magisk/SuperSU/Sukisu packages — hidden from PackageManager
+✅ Runtime.exec("su") — intercepted, returns empty
+✅ ro.build.tags → release-keys
+✅ ro.debuggable → 0
+✅ ro.secure → 1
+✅ ro.boot.verifiedbootstate → green
+✅ SELinux → appears enforcing
+✅ /proc/mounts → magisk entries filtered
+✅ WiFi MAC → spoofed
+✅ IMEI, IMSI, Android ID → fully spoofed
+
+══════════════════════════════════════════════
+Made for Security Research | AmbulatorSec v1.0
+══════════════════════════════════════════════

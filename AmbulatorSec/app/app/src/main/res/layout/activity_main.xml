@@ -1,0 +1,254 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent" android:layout_height="match_parent"
+    android:background="@color/bg_main" android:fillViewport="true">
+
+    <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+        android:orientation="vertical" android:padding="16dp">
+
+        <!-- ═══ HEADER ═══ -->
+        <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+            android:orientation="horizontal" android:gravity="center_vertical"
+            android:paddingTop="8dp" android:paddingBottom="16dp">
+
+            <TextView android:layout_width="0dp" android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="🚑 AmbulatorSec"
+                android:textColor="@color/text_primary"
+                android:textSize="22sp" android:textStyle="bold"/>
+
+            <TextView android:id="@+id/tv_status"
+                android:layout_width="wrap_content" android:layout_height="wrap_content"
+                android:text="○ INACTIVE"
+                android:textColor="@color/text_secondary"
+                android:textSize="12sp" android:textStyle="bold"/>
+        </LinearLayout>
+
+        <!-- ═══ MASTER TOGGLE ═══ -->
+        <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+            android:background="@drawable/bg_card" android:padding="16dp"
+            android:orientation="horizontal" android:gravity="center_vertical"
+            android:layout_marginBottom="12dp">
+
+            <TextView android:layout_width="0dp" android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Module Active"
+                android:textColor="@color/text_primary" android:textSize="16sp"
+                android:textStyle="bold"/>
+
+            <androidx.appcompat.widget.SwitchCompat android:id="@+id/sw_enabled"
+                android:layout_width="wrap_content" android:layout_height="wrap_content"
+                android:checked="true"/>
+        </LinearLayout>
+
+        <!-- ═══ TARGET APP ═══ -->
+        <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+            android:background="@drawable/bg_card" android:padding="14dp"
+            android:orientation="vertical" android:layout_marginBottom="12dp">
+
+            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+                android:text="🎯  Target App" android:textColor="@color/accent_orange"
+                android:textSize="13sp" android:textStyle="bold"
+                android:layout_marginBottom="10dp"/>
+
+            <!-- Empty state -->
+            <LinearLayout android:id="@+id/card_app_empty"
+                android:layout_width="match_parent" android:layout_height="wrap_content"
+                android:orientation="vertical" android:gravity="center"
+                android:visibility="visible">
+
+                <Button android:id="@+id/btn_select_app"
+                    android:layout_width="match_parent" android:layout_height="44dp"
+                    android:text="+ Select Target App"
+                    android:textColor="@color/text_primary"
+                    android:background="@drawable/bg_btn_save"
+                    android:textSize="14sp"/>
+            </LinearLayout>
+
+            <!-- Selected state -->
+            <LinearLayout android:id="@+id/card_app_selected"
+                android:layout_width="match_parent" android:layout_height="wrap_content"
+                android:orientation="horizontal" android:gravity="center_vertical"
+                android:visibility="gone">
+
+                <ImageView android:id="@+id/iv_app_icon"
+                    android:layout_width="48dp" android:layout_height="48dp"
+                    android:layout_marginEnd="12dp"/>
+
+                <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content"
+                    android:layout_weight="1" android:orientation="vertical">
+                    <TextView android:id="@+id/tv_app_name"
+                        android:layout_width="wrap_content" android:layout_height="wrap_content"
+                        android:textColor="@color/text_primary" android:textSize="15sp"
+                        android:textStyle="bold" android:maxLines="1" android:ellipsize="end"/>
+                    <TextView android:id="@+id/tv_app_pkg"
+                        android:layout_width="wrap_content" android:layout_height="wrap_content"
+                        android:textColor="@color/text_secondary" android:textSize="12sp"
+                        android:maxLines="1" android:ellipsize="end"/>
+                </LinearLayout>
+
+                <Button android:id="@+id/btn_select_app"
+                    android:layout_width="wrap_content" android:layout_height="36dp"
+                    android:text="Change"
+                    android:textColor="@color/text_primary"
+                    android:background="@drawable/bg_btn_small"
+                    android:textSize="12sp"/>
+            </LinearLayout>
+        </LinearLayout>
+
+        <!-- ═══ ROOT BYPASS ═══ -->
+        <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+            android:background="@drawable/bg_card" android:padding="14dp"
+            android:orientation="vertical" android:layout_marginBottom="12dp">
+
+            <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+                android:orientation="horizontal" android:gravity="center_vertical"
+                android:layout_marginBottom="8dp">
+                <TextView android:layout_width="0dp" android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="@string/section_root"
+                    android:textColor="@color/green_active" android:textSize="13sp"
+                    android:textStyle="bold"/>
+                <androidx.appcompat.widget.SwitchCompat android:id="@+id/sw_root_bypass"
+                    android:layout_width="wrap_content" android:layout_height="wrap_content"
+                    android:checked="true"/>
+            </LinearLayout>
+
+            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+                android:text="• File system cloaking\n• PackageManager hiding\n• Runtime.exec intercept\n• Build props patch\n• SELinux enforcing spoof\n• /proc/mounts filter"
+                android:textColor="@color/text_secondary" android:textSize="12sp"
+                android:lineSpacingExtra="3dp"/>
+        </LinearLayout>
+
+        <!-- ═══ PHONE SPOOF ═══ -->
+        <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+            android:background="@drawable/bg_card" android:padding="14dp"
+            android:orientation="vertical" android:layout_marginBottom="12dp">
+
+            <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+                android:orientation="horizontal" android:gravity="center_vertical"
+                android:layout_marginBottom="10dp">
+                <TextView android:layout_width="0dp" android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="@string/section_phone"
+                    android:textColor="@color/accent_orange" android:textSize="13sp"
+                    android:textStyle="bold"/>
+                <androidx.appcompat.widget.SwitchCompat android:id="@+id/sw_phone_spoof"
+                    android:layout_width="wrap_content" android:layout_height="wrap_content"
+                    android:checked="true"/>
+            </LinearLayout>
+
+            <!-- Number row -->
+            <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+                android:orientation="horizontal" android:gravity="center_vertical"
+                android:layout_marginBottom="8dp">
+                <EditText android:id="@+id/et_number"
+                    android:layout_width="0dp" android:layout_height="44dp"
+                    android:layout_weight="1"
+                    android:hint="@string/hint_number"
+                    android:inputType="phone"
+                    android:layout_marginEnd="8dp"/>
+                <Button android:id="@+id/btn_rand_number"
+                    android:layout_width="44dp" android:layout_height="44dp"
+                    android:text="🎲" android:textSize="18sp"
+                    android:background="@drawable/bg_btn_small"
+                    android:padding="0dp"/>
+            </LinearLayout>
+
+            <TextView android:id="@+id/tv_carrier_badge"
+                android:layout_width="wrap_content" android:layout_height="wrap_content"
+                android:textColor="@color/green_active" android:textSize="12sp"
+                android:layout_marginBottom="8dp"/>
+
+            <EditText android:id="@+id/et_operator"
+                android:layout_width="match_parent" android:layout_height="44dp"
+                android:hint="@string/hint_operator" android:layout_marginBottom="6dp"/>
+            <EditText android:id="@+id/et_sim_op"
+                android:layout_width="match_parent" android:layout_height="44dp"
+                android:hint="@string/hint_sim_op" android:layout_marginBottom="6dp"/>
+            <EditText android:id="@+id/et_mcc_mnc"
+                android:layout_width="match_parent" android:layout_height="44dp"
+                android:hint="@string/hint_mcc_mnc" android:layout_marginBottom="6dp"/>
+            <EditText android:id="@+id/et_country"
+                android:layout_width="match_parent" android:layout_height="44dp"
+                android:hint="@string/hint_country" android:layout_marginBottom="6dp"/>
+            <EditText android:id="@+id/et_imsi"
+                android:layout_width="match_parent" android:layout_height="44dp"
+                android:hint="@string/hint_imsi" android:inputType="number"
+                android:layout_marginBottom="6dp"/>
+            <EditText android:id="@+id/et_iccid"
+                android:layout_width="match_parent" android:layout_height="44dp"
+                android:hint="@string/hint_iccid" android:inputType="number"
+                android:layout_marginBottom="6dp"/>
+
+            <!-- IMEI row -->
+            <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+                android:orientation="horizontal" android:gravity="center_vertical"
+                android:layout_marginBottom="6dp">
+                <EditText android:id="@+id/et_imei"
+                    android:layout_width="0dp" android:layout_height="44dp"
+                    android:layout_weight="1"
+                    android:hint="@string/hint_imei" android:inputType="number"
+                    android:layout_marginEnd="8dp"/>
+                <Button android:id="@+id/btn_rand_imei"
+                    android:layout_width="44dp" android:layout_height="44dp"
+                    android:text="🎲" android:textSize="18sp"
+                    android:background="@drawable/bg_btn_small" android:padding="0dp"/>
+            </LinearLayout>
+
+            <!-- Android ID row -->
+            <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+                android:orientation="horizontal" android:gravity="center_vertical">
+                <EditText android:id="@+id/et_android_id"
+                    android:layout_width="0dp" android:layout_height="44dp"
+                    android:layout_weight="1"
+                    android:hint="@string/hint_android_id"
+                    android:layout_marginEnd="8dp"/>
+                <Button android:id="@+id/btn_rand_aid"
+                    android:layout_width="44dp" android:layout_height="44dp"
+                    android:text="🎲" android:textSize="18sp"
+                    android:background="@drawable/bg_btn_small" android:padding="0dp"/>
+            </LinearLayout>
+        </LinearLayout>
+
+        <!-- ═══ CUSTOM MESSAGE ═══ -->
+        <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+            android:background="@drawable/bg_card" android:padding="14dp"
+            android:orientation="vertical" android:layout_marginBottom="12dp">
+
+            <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+                android:orientation="horizontal" android:gravity="center_vertical"
+                android:layout_marginBottom="10dp">
+                <TextView android:layout_width="0dp" android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="@string/section_msg"
+                    android:textColor="@color/text_primary" android:textSize="13sp"
+                    android:textStyle="bold"/>
+                <androidx.appcompat.widget.SwitchCompat android:id="@+id/sw_show_msg"
+                    android:layout_width="wrap_content" android:layout_height="wrap_content"/>
+            </LinearLayout>
+
+            <EditText android:id="@+id/et_custom_msg"
+                android:layout_width="match_parent" android:layout_height="wrap_content"
+                android:hint="@string/hint_custom_msg"
+                android:minLines="2" android:maxLines="4"
+                android:inputType="textMultiLine"
+                android:gravity="top"/>
+
+            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+                android:text="This message appears as Toast in the target app on every screen open."
+                android:textColor="@color/text_hint" android:textSize="11sp"
+                android:layout_marginTop="6dp"/>
+        </LinearLayout>
+
+        <!-- ═══ SAVE BUTTON ═══ -->
+        <Button android:id="@+id/btn_save"
+            android:layout_width="match_parent" android:layout_height="52dp"
+            android:text="@string/save_apply"
+            android:textColor="@color/text_primary"
+            android:textSize="16sp" android:textStyle="bold"
+            android:background="@drawable/bg_btn_save"
+            android:layout_marginTop="4dp" android:layout_marginBottom="24dp"/>
+
+    </LinearLayout>
+</ScrollView>

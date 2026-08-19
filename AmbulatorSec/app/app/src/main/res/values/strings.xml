@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">AmbulatorSec</string>
+    <string name="hint_number">Phone Number (+91xxxxxxxxxx)</string>
+    <string name="hint_imsi">IMSI (15 digits)</string>
+    <string name="hint_operator">Operator Name</string>
+    <string name="hint_sim_op">SIM Operator</string>
+    <string name="hint_iccid">ICCID (20 digits)</string>
+    <string name="hint_country">Country ISO (in/us/uk)</string>
+    <string name="hint_mcc_mnc">MCC+MNC (40410)</string>
+    <string name="hint_android_id">Android ID (hex 16 chars)</string>
+    <string name="hint_imei">IMEI (15 digits)</string>
+    <string name="hint_custom_msg">Custom message shown in target app…</string>
+    <string name="select_app">Select Target App</string>
+    <string name="no_app_selected">No app selected yet</string>
+    <string name="save_apply">💾 Save &amp; Apply</string>
+    <string name="section_root">🛡 Root Detection Bypass</string>
+    <string name="section_phone">📱 Phone Identity Spoof</string>
+    <string name="section_msg">💬 Custom Message Overlay</string>
+</resources>
