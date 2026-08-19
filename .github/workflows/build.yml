@@ -2,7 +2,7 @@ name: Build NetSpoof v5 APK
 
 on:
   push:
-    branches: [ "claude/custom-root-detection-ambulance-ewvq8w", "main" ]
+    branches: [ "main", "claude/custom-root-detection-ambulance-ewvq8w" ]
     paths:
       - 'NetSpoofModule_v5/**'
   workflow_dispatch:
@@ -10,9 +10,6 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: NetSpoofModule_v5
 
     steps:
       - uses: actions/checkout@v4
@@ -25,36 +22,16 @@ jobs:
           cache: gradle
 
       - name: Grant execute permission for gradlew
-        run: chmod +x gradlew
+        run: chmod +x NetSpoofModule_v5/gradlew
 
       - name: Build Release APK
-        run: ./gradlew assembleRelease
-
-      - name: Rename APK
         run: |
-          mkdir -p ../output
-          cp app/build/outputs/apk/release/app-release-unsigned.apk ../output/NetSpoofV5.apk
+          cd NetSpoofModule_v5
+          ./gradlew assembleRelease --no-daemon
 
-      - name: Upload APK artifact
+      - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
           name: NetSpoofV5-APK
-          path: output/NetSpoofV5.apk
+          path: NetSpoofModule_v5/app/build/outputs/apk/release/app-release-unsigned.apk
           retention-days: 90
-
-      - name: Create GitHub Release
-        uses: softprops/action-gh-release@v2
-        with:
-          tag_name: v5.0-${{ github.run_number }}
-          name: "NetSpoof v5.0 — Build ${{ github.run_number }}"
-          body: |
-            ## NetSpoof v5 — All-in-One LSposed Module
-
-            **Install karke LSposed mein enable karo, phir target app select karo.**
-
-            Root + Zygisk + LSposed — sab hide. Phone identity spoof.
-          files: output/NetSpoofV5.apk
-          draft: false
-          prerelease: false
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
